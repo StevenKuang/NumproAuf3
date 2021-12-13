@@ -22,8 +22,35 @@ public class Gauss {
      * b: Ein Vektor der Laenge n
      */
     public static double[] solve(double[][] A, double[] b) {
-        //TODO: Diese Methode ist zu implementieren
-        return null;
+        int length = b.length;
+        for (int pivot = 0; pivot < length; pivot++) {
+            int max = pivot;
+            for (int i = pivot + 1; i < length; i++) {
+                if (Math.abs(A[i][pivot]) > Math.abs(A[max][pivot])) {
+                    max = i;
+                }
+            }
+            double swap2 = b[pivot]; b[pivot] = b[max]; b[max] = swap2;
+            double[] swap = A[pivot]; A[pivot] = A[max]; A[max] = swap;
+            // Gauss
+            for (int i = pivot + 1; i < length; i++) {
+                double Coefficient = A[i][pivot] / A[pivot][pivot];
+                b[i] -= Coefficient * b[pivot];
+                for (int j = pivot; j < length; j++) {
+                    A[i][j] -= Coefficient * A[pivot][j];
+                }
+            }
+        }
+        //solve equations
+        double[] x = new double[length];
+        for (int i = length - 1; i >= 0; i--) {
+            double sum = 0.0;
+            for (int j = i + 1; j < length; j++) {
+                sum += A[i][j] * x[j];
+            }
+            x[i] = (b[i] - sum) / A[i][i];
+        }
+        return x;
     }
 
     /**
