@@ -22,6 +22,8 @@ public class Gauss {
      * b: Ein Vektor der Laenge n
      *///
     public static double[] solve(double[][] A, double[] b) {
+        double[][] temp = A;
+        double[] temp1 = b;
         int length = b.length;
         for (int pivot = 0; pivot < length; pivot++) {
             int max = pivot;
@@ -50,6 +52,8 @@ public class Gauss {
             }
             x[i] = (b[i] - sum) / A[i][i];
         }
+        A = temp;
+        b = temp1;
         return x;
     }
 
