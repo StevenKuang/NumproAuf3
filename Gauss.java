@@ -1,4 +1,4 @@
-
+import java.util.Arrays;
 
 public class Gauss {
 
@@ -22,8 +22,9 @@ public class Gauss {
      * b: Ein Vektor der Laenge n
      *///
     public static double[] solve(double[][] A, double[] b) {
-        double[][] temp = A;
-        double[] temp1 = b;
+        double[][] temp = Arrays.stream(A).map(double[]::clone).toArray(double[][]::new);
+
+        double[] temp1 = Arrays.copyOf(b, b.length);;
         int length = b.length;
         for (int pivot = 0; pivot < length; pivot++) {
             int max = pivot;
