@@ -20,7 +20,7 @@ public class Gauss {
      * PARAMETER: A:
      * Eine regulaere Matrix der Groesse n x n
      * b: Ein Vektor der Laenge n
-     */
+     *///
     public static double[] solve(double[][] A, double[] b) {
         int length = b.length;
         for (int pivot = 0; pivot < length; pivot++) {
