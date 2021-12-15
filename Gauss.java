@@ -128,17 +128,9 @@ public class Gauss {
             }
             return x;
         }
-        //solve equations
-        double[] x = new double[A.length];
-        for (int i = A.length - 1; i >= 0; i--) {
-            double sum = 0.0;
-            for (int j = i + 1; j < A.length; j++) {
-                sum += copyA[i][j] * x[j];
-            }
-            x[i] = (- sum) / copyA[i][i];
-        }
+        //if a is singular, which means we always found a pivot , we return the null vector
 
-        return x;
+        return new double[A.length];
     }
     private static int getIndexRowPivotUnderElement(double[][] A, int column, int row) {
         //A[0].length is number of rows, and A.length is number of columns
@@ -174,5 +166,11 @@ public class Gauss {
         }
 
         return y;
+    }
+
+    public static void main(String[] args) {
+        double[][] test = new double[][]{{1.0,2.0} , {-2.0,-4.0 }};
+        double[] x = solveSing(test);
+        System.out.println(Arrays.toString(x));
     }
 }
