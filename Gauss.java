@@ -83,15 +83,14 @@ public class Gauss {
      * A: Eine singulaere Matrix der Groesse n x n
      */
     public static double[] solveSing(double[][] A) {
-        double[] vector = new double[A.length];
-        double[][] copyA = new double[A.length][];
+        double[][] copyA = new double[A.length][A.length];
         for (int i = 0; i < A.length; i++) {
             copyA[i] = Arrays.copyOf(A[i], A[i].length);
         }
         int pivot = 0; double coefficient = 1.0; boolean noPivot= false; int k;
         for (k = 0; k < A.length; k++) {
             pivot = getIndexRowPivotUnderElement(copyA,k,k);
-            if(Double.compare(A[pivot][k],0) == 0) { noPivot = true; break;}
+            if(A[pivot][k] < 1E-10) { noPivot = true; break;}
             swapRows(copyA,k,pivot);
             // Gauss
             for (int i = k + 1; i < A.length; i++) {
@@ -134,8 +133,7 @@ public class Gauss {
     }
     private static int getIndexRowPivotUnderElement(double[][] A, int column, int row) {
         //A[0].length is number of rows, and A.length is number of columns
-        if(row+1 == A.length) return row;
-        int max = row+1; //max is the index of the row that contains the pivot
+        int max = row; //max is the index of the row that contains the pivot
         for (int i = row+1; i < A.length ; i++) {
             if(Math.abs(A[i][column]) > Math.abs(A[max][column])) max = i;
         }
