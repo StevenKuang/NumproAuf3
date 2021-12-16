@@ -10,16 +10,16 @@ public class Gauss {
      * b: Ein Vektor der Laenge n
      */
     public static double[] backSubst(double[][] R, double[] b) {
-        double[] x = new double[R.length];
+        double[] result = new double[R.length];
         for (int i = R.length - 1; i >= 0; i--) {
-            double sum = 0.0;
+            double tempValue = 0.0;
             for (int j = i + 1; j < R.length; j++) {
-                sum += R[i][j] * x[j];
+                tempValue += R[i][j] * result[j];
             }
-            x[i] = (b[i] - sum) / R[i][i];
+            result[i] = (b[i] - tempValue) / R[i][i];
         }
 
-        return x;
+        return result;
     }
 
     /**
@@ -30,39 +30,29 @@ public class Gauss {
      * b: Ein Vektor der Laenge n
      *///
     public static double[] solve(double[][] A, double[] b) {
-        double[][] temp = Arrays.stream(A).map(double[]::clone).toArray(double[][]::new);
+        double[][] tempA = Arrays.stream(A).map(double[]::clone).toArray(double[][]::new);
 
-        double[] temp1 = Arrays.copyOf(b, b.length);
+        double[] tempB = Arrays.copyOf(b, b.length);
         int length = b.length;
         for (int pivot = 0; pivot < length; pivot++) {
-            int max = pivot;
+            int maxPivot = pivot;
             for (int i = pivot + 1; i < length; i++) {
-                if (Math.abs(temp[i][pivot]) > Math.abs(temp[max][pivot])) {
-                    max = i;
+                if (Math.abs(tempA[i][pivot]) > Math.abs(tempA[maxPivot][pivot])) {
+                    maxPivot = i;
                 }
             }
-            double swap2 = temp1[pivot]; temp1[pivot] = temp1[max]; temp1[max] = swap2;
-            double[] swap = temp[pivot]; temp[pivot] = temp[max]; temp[max] = swap;
+            double swapVector = tempB[pivot]; tempB[pivot] = tempB[maxPivot]; tempB[maxPivot] = swapVector;
+            double[] swapMatrix = tempA[pivot]; tempA[pivot] = tempA[maxPivot]; tempA[maxPivot] = swapMatrix;
             // Gauss
             for (int i = pivot + 1; i < length; i++) {
-                double Coefficient = temp[i][pivot] / temp[pivot][pivot];
-                temp1[i] -= Coefficient * temp1[pivot];
+                double Coefficient = tempA[i][pivot] / tempA[pivot][pivot];
+                tempB[i] -= Coefficient * tempB[pivot];
                 for (int j = pivot; j < length; j++) {
-                    temp[i][j] -= Coefficient * temp[pivot][j];
+                    tempA[i][j] -= Coefficient * tempA[pivot][j];
                 }
             }
         }
-        //solve equations
-        double[] x = new double[length];
-        for (int i = length - 1; i >= 0; i--) {
-            double sum = 0.0;
-            for (int j = i + 1; j < length; j++) {
-                sum += temp[i][j] * x[j];
-            }
-            x[i] = (temp1[i] - sum) / temp[i][i];
-        }
-
-        return x;
+        return backSubst(A, b);
     }
 
     /**
