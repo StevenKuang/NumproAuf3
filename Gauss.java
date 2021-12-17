@@ -11,7 +11,7 @@ public class Gauss {
      */
     public static double[] backSubst(double[][] R, double[] b) {
         double[] x = new double[R.length];
-        for (int i = R.length - 1; i >= 0; i--) {
+            for (int i = R.length - 1; i >= 0; i--) {
             double sum = 0.0;
             for (int j = i + 1; j < R.length; j++) {
                 sum += R[i][j] * x[j];
@@ -102,25 +102,18 @@ public class Gauss {
         }
         if(noPivot) {
             // extract the vector v which the column where we stopped the gauss elimination => k
-            double[] v = new double[k+1];
-            for (int i = 0; i <k+1  ; i++) {
+            double[] v = new double[k];
+            for (int i = 0; i <k  ; i++) {
                 v[i] = - copyA[i][k];
             }
             // extract the matrix which is the part of the original matrix from 0->k-1
-            double[][] T = new double[k+1][k+1];
-            for (int i = 0; i < k+1; i++) {
-                System.arraycopy(copyA[i], 0, T[i], 0, k+1);
+            double[][] T = new double[k][k];
+            for (int i = 0; i < k; i++) {
+                System.arraycopy(copyA[i], 0, T[i], 0, k);
             }
-            double[] x = new double[A.length];
-            double sum;
-            for (int i = T.length - 1; i >= 0; i--) {
-                sum = 0.0;
-                for (int j = i + 1; j < T.length; j++) {
-                    sum += T[i][j] * x[j];
-                }
-                x[i] = (v[i] - sum) / T[i][i];
-            }
+            double[] x = backSubst(T,v);
             // the last index that was filled was k
+            if(k > x.length) return x;
             x[k+1] = 1.0;
             for (int i = k+2; i < x.length; i++) {
                 x[i] = 0;
@@ -168,7 +161,11 @@ public class Gauss {
 
     public static void main(String[] args) {
         double[][] test = new double[][]{{1.0,2.0} , {-2.0,-4.0 }};
-        double[] x = solveSing(test);
+        double[][] test1 = new double[][]{{1.0,2.0, 0.0}, {-1.0,-2.0,0.0}, {0.0,0.0,0.0}};
+        double[][] test2 = new double[][] {{0.99999999999,-0.5}, {1.0,-0.5}};
+        double[][] test3 = new double[][] {{1.74, 3.01,-17.0}, {3.12, 9.0, 1.11}, {4.86,12.01,-15.89}};
+
+        double[] x = solveSing(test2);
         System.out.println(Arrays.toString(x));
     }
 }
