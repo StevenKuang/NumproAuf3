@@ -10,10 +10,41 @@ public class PageRank {
      * rho: Wahrscheinlichkeit, anstatt einem Link zu folgen,
      *      zufaellig irgendeine Seite zu besuchen
      */
+    // public static double[][] buildProbabilityMatrix(int[][] L, double rho) {
+    //     int length = L.length;
+    //     double [][] result = new double[length][length];
+    //     //wrong it doesn't work with streams :D we need loops
+    //     //Arrays.stream(L).forEach(x-> Arrays.stream(x).map(p-> (int)((1-rho)*(p) + rho/length)).toArray());
+
+    //     for(int i = 0; i < length ; i++) {
+    //         for (int j = 0;j < length; j++) {
+    //             result[i][j]= ((1 - rho) * (L[i][j]) + rho/length);
+    //         }
+    //     }
+    //     return result;
+    // }
+
+    // cuz your version and mine are literally the same thing so i just merged them xD.
+    // also we don't need that much loops this way :)
     public static double[][] buildProbabilityMatrix(int[][] L, double rho) {
-        //TODO: Diese Methode ist zu implementieren
-        return new double[2][2];
+        
+        int dim = L.length;
+        double[][] prob = new double[dim][dim];
+        for (int i = 0; i < dim; i++) {
+            int sum = 0;
+            for (int j = 0; j < dim; j++) 
+                sum += L[i][j];
+            for (int j = 0; j < dim; j++) {
+                if(L[i][j] == 1)
+                    prob[i][j] = 1 / sum;
+                else
+                    prob[i][j] = 0.0;
+                prob[i][j] = (1 - rho) * prob[i][j] + rho/dim;
+            }
+        }
+        return prob;
     }
+
 
     /**
      * Diese Methode berechnet die PageRanks der einzelnen Seiten,

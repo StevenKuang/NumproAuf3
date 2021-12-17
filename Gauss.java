@@ -10,16 +10,16 @@ public class Gauss {
      * b: Ein Vektor der Laenge n
      */
     public static double[] backSubst(double[][] R, double[] b) {
-        double[] x = new double[R.length];
-            for (int i = R.length - 1; i >= 0; i--) {
-            double sum = 0.0;
+        double[] result = new double[R.length];
+        for (int i = R.length - 1; i >= 0; i--) {
+            double tempValue = 0.0;
             for (int j = i + 1; j < R.length; j++) {
-                sum += R[i][j] * x[j];
+                tempValue += R[i][j] * result[j];
             }
-            x[i] = (b[i] - sum) / R[i][i];
+            result[i] = (b[i] - tempValue) / R[i][i];
         }
 
-        return x;
+        return result;
     }
 
     /**
@@ -30,39 +30,29 @@ public class Gauss {
      * b: Ein Vektor der Laenge n
      *///
     public static double[] solve(double[][] A, double[] b) {
-        double[][] temp = Arrays.stream(A).map(double[]::clone).toArray(double[][]::new);
+        double[][] tempA = Arrays.stream(A).map(double[]::clone).toArray(double[][]::new);
 
-        double[] temp1 = Arrays.copyOf(b, b.length);
+        double[] tempB = Arrays.copyOf(b, b.length);
         int length = b.length;
         for (int pivot = 0; pivot < length; pivot++) {
-            int max = pivot;
+            int maxPivot = pivot;
             for (int i = pivot + 1; i < length; i++) {
-                if (Math.abs(temp[i][pivot]) > Math.abs(temp[max][pivot])) {
-                    max = i;
+                if (Math.abs(tempA[i][pivot]) > Math.abs(tempA[maxPivot][pivot])) {
+                    maxPivot = i;
                 }
             }
-            double swap2 = temp1[pivot]; temp1[pivot] = temp1[max]; temp1[max] = swap2;
-            double[] swap = temp[pivot]; temp[pivot] = temp[max]; temp[max] = swap;
+            double swapVector = tempB[pivot]; tempB[pivot] = tempB[maxPivot]; tempB[maxPivot] = swapVector;
+            double[] swapMatrix = tempA[pivot]; tempA[pivot] = tempA[maxPivot]; tempA[maxPivot] = swapMatrix;
             // Gauss
             for (int i = pivot + 1; i < length; i++) {
-                double Coefficient = temp[i][pivot] / temp[pivot][pivot];
-                temp1[i] -= Coefficient * temp1[pivot];
+                double Coefficient = tempA[i][pivot] / tempA[pivot][pivot];
+                tempB[i] -= Coefficient * tempB[pivot];
                 for (int j = pivot; j < length; j++) {
-                    temp[i][j] -= Coefficient * temp[pivot][j];
+                    tempA[i][j] -= Coefficient * tempA[pivot][j];
                 }
             }
         }
-        //solve equations
-        double[] x = new double[length];
-        for (int i = length - 1; i >= 0; i--) {
-            double sum = 0.0;
-            for (int j = i + 1; j < length; j++) {
-                sum += temp[i][j] * x[j];
-            }
-            x[i] = (temp1[i] - sum) / temp[i][i];
-        }
-
-        return x;
+        return backSubst(A, b);
     }
 
     /**
@@ -102,18 +92,25 @@ public class Gauss {
         }
         if(noPivot) {
             // extract the vector v which the column where we stopped the gauss elimination => k
-            double[] v = new double[k];
-            for (int i = 0; i <k  ; i++) {
+            double[] v = new double[k+1];
+            for (int i = 0; i <k+1  ; i++) {
                 v[i] = - copyA[i][k];
             }
             // extract the matrix which is the part of the original matrix from 0->k-1
-            double[][] T = new double[k][k];
-            for (int i = 0; i < k; i++) {
-                System.arraycopy(copyA[i], 0, T[i], 0, k);
+            double[][] T = new double[k+1][k+1];
+            for (int i = 0; i < k+1; i++) {
+                System.arraycopy(copyA[i], 0, T[i], 0, k+1);
             }
-            double[] x = backSubst(T,v);
+            double[] x = new double[A.length];
+            double sum;
+            for (int i = T.length - 1; i >= 0; i--) {
+                sum = 0.0;
+                for (int j = i + 1; j < T.length; j++) {
+                    sum += T[i][j] * x[j];
+                }
+                x[i] = (v[i] - sum) / T[i][i];
+            }
             // the last index that was filled was k
-            if(k > x.length) return x;
             x[k+1] = 1.0;
             for (int i = k+2; i < x.length; i++) {
                 x[i] = 0;
@@ -161,11 +158,7 @@ public class Gauss {
 
     public static void main(String[] args) {
         double[][] test = new double[][]{{1.0,2.0} , {-2.0,-4.0 }};
-        double[][] test1 = new double[][]{{1.0,2.0, 0.0}, {-1.0,-2.0,0.0}, {0.0,0.0,0.0}};
-        double[][] test2 = new double[][] {{0.99999999999,-0.5}, {1.0,-0.5}};
-        double[][] test3 = new double[][] {{1.74, 3.01,-17.0}, {3.12, 9.0, 1.11}, {4.86,12.01,-15.89}};
-
-        double[] x = solveSing(test2);
+        double[] x = solveSing(test);
         System.out.println(Arrays.toString(x));
     }
 }
