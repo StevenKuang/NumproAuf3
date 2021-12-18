@@ -53,7 +53,7 @@ public class Gauss {
                 }
             }
         }
-        return backSubst(A, b);
+        return backSubst(tempA, tempB);
     }
 
     /**
