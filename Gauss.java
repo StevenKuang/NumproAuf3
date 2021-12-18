@@ -2,6 +2,7 @@ import java.util.Arrays;
 
 public class Gauss {
 
+    public static final double EPSILON = 1E-10;
     /**
      * Diese Methode soll die Loesung x des LGS R*x=b durch
      * Rueckwaertssubstitution ermitteln.
@@ -73,46 +74,48 @@ public class Gauss {
      * A: Eine singulaere Matrix der Groesse n x n
      */
     public static double[] solveSing(double[][] A) {
-        double[][] copyA = new double[A.length][A.length];
-        for (int i = 0; i < A.length; i++) {
-            copyA[i] = Arrays.copyOf(A[i], A[i].length);
-        }
-        int pivot = 0; double coefficient = 1.0; boolean noPivot= false; int k;
-        for (k = 0; k < A.length; k++) {
-            pivot = getIndexRowPivotUnderElement(copyA,k,k);
-            if(A[pivot][k] < 1E-10) { noPivot = true; break;}
-            swapRows(copyA,k,pivot);
+        double[][] copyA = Arrays.stream(A).map(double[]::clone).toArray(double[][]::new);
+        boolean noPivot = false;
+        int length = A.length; int pivot;
+        for (pivot = 0; pivot < length; pivot++) {
+            int maxPivot = pivot;
+            for (int i = pivot + 1; i < length; i++) {
+                if (Math.abs(copyA[i][pivot]) > Math.abs(copyA[maxPivot][pivot])) {
+                    maxPivot = i;
+                }
+            }
+            if (copyA[maxPivot][pivot] < EPSILON) { noPivot = true; break;}
+            double[] swapMatrix = copyA[pivot]; copyA[pivot] = copyA[maxPivot]; copyA[maxPivot] = swapMatrix;
             // Gauss
-            for (int i = k + 1; i < A.length; i++) {
-                coefficient = copyA[i][k] / copyA[k][k];
-                for (int j = k; j < A.length; j++) {
-                    copyA[i][j] -= coefficient * copyA[k][j];
+            for (int i = pivot + 1; i < length; i++) {
+                double Coefficient = copyA[i][pivot] / copyA[pivot][pivot];
+                for (int j = pivot; j < length; j++) {
+                    copyA[i][j] -= Coefficient * copyA[pivot][j];
                 }
             }
         }
         if(noPivot) {
-            // extract the vector v which the column where we stopped the gauss elimination => k
-            double[] v = new double[k+1];
-            for (int i = 0; i <k+1  ; i++) {
-                v[i] = - copyA[i][k];
+            if(copyA.length == 2) return new double[] {-copyA[0][1]/copyA[0][0], 1.0};
+            // extract the vector v which the column where we stopped the gauss elimination => pivot-1
+            double[] v = new double[pivot];
+            for (int i = 0; i <pivot  ; i++) {
+                v[i] = - copyA[i][pivot];
             }
-            // extract the matrix which is the part of the original matrix from 0->k-1
-            double[][] T = new double[k+1][k+1];
-            for (int i = 0; i < k+1; i++) {
-                System.arraycopy(copyA[i], 0, T[i], 0, k+1);
+            // extract the matrix which is the part of the original matrix from 0->pivot-1
+            double[][] T = new double[pivot][pivot];
+            for (int i = 0; i < pivot; i++) {
+                System.arraycopy(copyA[i], 0, T[i], 0, pivot);
             }
+            double[] x1 = backSubst(T,v);
+
             double[] x = new double[A.length];
-            double sum;
-            for (int i = T.length - 1; i >= 0; i--) {
-                sum = 0.0;
-                for (int j = i + 1; j < T.length; j++) {
-                    sum += T[i][j] * x[j];
-                }
-                x[i] = (v[i] - sum) / T[i][i];
-            }
+
             // the last index that was filled was k
-            x[k+1] = 1.0;
-            for (int i = k+2; i < x.length; i++) {
+            for (int i = 0; i < x1.length; i++) {
+                x[i] = x1[i];
+            }
+            x[pivot] = 1.0;
+            for (int i = pivot+1; i < x.length; i++) {
                 x[i] = 0;
             }
             return x;
