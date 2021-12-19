@@ -31,15 +31,18 @@ public class PageRank {
         int dim = L.length;
         double[][] prob = new double[dim][dim];
         for (int i = 0; i < dim; i++) {
-            int sum = 0;
+            double sum = 0.0;
             for (int j = 0; j < dim; j++) 
-                sum += L[i][j];
+                sum += L[j][i];
             for (int j = 0; j < dim; j++) {
-                if(L[i][j] == 1)
-                    prob[i][j] = 1 / (double) sum;
+                if(L[j][i] == 1)
+                    prob[j][i] = 1 / sum;
                 else
-                    prob[i][j] = 0.0;
-                prob[i][j] = (1 - rho) * prob[i][j] + rho/dim;
+                    prob[j][i] = 0.0;
+                prob[j][i] = (1 - rho) * prob[j][i] + rho/dim;
+                // 1/4 + 1/6 = 5/12
+                // 1/6
+                // 5/12
             }
         }
         return prob;
@@ -123,4 +126,12 @@ public class PageRank {
             pr = p;
         }
     }
+    public static void main(String[] args) {
+        int[][] L = {{1,0,1},{0,1,0},{1,1,1}};
+        double rho = 0.5;
+        buildProbabilityMatrix(L, rho);
+        System.out.println("res");
+    }
 }
+
+
