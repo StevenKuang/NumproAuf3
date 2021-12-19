@@ -70,11 +70,9 @@ public class PageRank {
         double sum = Arrays.stream(p).sum();
         if(sum == 0) return p;
         double one = 0;
-        for (int i = 0; i < p.length - 1; i++) {
+        for (int i = 0; i < p.length; i++) {
         p[i] *= (1/sum);
-        one += p[i];
         }
-        p[p.length -1] = 1 - one;
         return p;
     }
 
@@ -126,12 +124,12 @@ public class PageRank {
             pr = p;
         }
     }
-    public static void main(String[] args) {
-        int[][] L = {{1,0,1},{0,1,0},{1,1,1}};
-        double rho = 0.5;
-        buildProbabilityMatrix(L, rho);
-        System.out.println("res");
-    }
+    // public static void main(String[] args) {
+    //     int[][] L = {{1,0,1},{0,1,0},{1,1,1}};
+    //     double rho = 0.5;
+    //     buildProbabilityMatrix(L, rho);
+    //     System.out.println("res");
+    // }
 }
 
 
