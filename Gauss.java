@@ -159,9 +159,9 @@ public class Gauss {
         return y;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         double[][] test = new double[][]{{1.0,2.0} , {-2.0,-4.0 }};
         double[] x = solveSing(test);
         System.out.println(Arrays.toString(x));
-    }
+    }*/
 }

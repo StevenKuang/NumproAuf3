@@ -69,7 +69,6 @@ public class PageRank {
         double[] p = Gauss.solveSing(probMatrix);
         double sum = Arrays.stream(p).sum();
         if(sum == 0) return p;
-        double one = 0;
         for (int i = 0; i < p.length; i++) {
         p[i] *= (1/sum);
         }
