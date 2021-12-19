@@ -36,7 +36,7 @@ public class PageRank {
                 sum += L[i][j];
             for (int j = 0; j < dim; j++) {
                 if(L[i][j] == 1)
-                    prob[i][j] = 1 / sum;
+                    prob[i][j] = 1 / (double) sum;
                 else
                     prob[i][j] = 0.0;
                 prob[i][j] = (1 - rho) * prob[i][j] + rho/dim;
@@ -66,9 +66,12 @@ public class PageRank {
         double[] p = Gauss.solveSing(probMatrix);
         double sum = Arrays.stream(p).sum();
         if(sum == 0) return p;
-        for (int i = 0; i < p.length; i++) {
+        double one = 0;
+        for (int i = 0; i < p.length - 1; i++) {
         p[i] *= (1/sum);
+        one += p[i];
         }
+        p[p.length -1] = 1 - one;
         return p;
     }
 
